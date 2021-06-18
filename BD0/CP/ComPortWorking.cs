@@ -17,19 +17,29 @@ namespace BD0.CP
         {
             if (port == null || port.IsOpen == false)
             {
-
-                //port = new GodSerialPort("COM" + num, baud, parity, stop)
-                //{
-                //    DtrEnable = dtr
-                //};
-
-                //port.StopBits = ConvertStopBits(stop);
-                //port.TryReadNumber = 1;
-                //port.TryReadSpanTime = 0;
-                //port.Terminator = null;
-                //port.Open();
-                //CfgChannelNum = Int32.Parse(num);
+                port = new GodSerialPort(num, baud, ConvertParity(parity),);
+                    port.PortName = num;
+                    port.BaudRate = baud;
+                    port.Parity = ConvertParity(parity);
+                    port.StopBits = ConvertStopBits(stop);
+                    port.DtrEnable = dtr;
+                    port.TryReadNumber = 1;
+                    port.TryReadSpanTime = 0;
+                    port.Terminator = null;
+                    port.Open();
+                    CfgChannelNum = Int32.Parse(num);
             }
+        }
+
+        private static Parity ConvertParity(int parity)
+        {
+            return parity switch
+            {
+                0 => Parity.None,
+                1 => Parity.Odd,
+                2 => Parity.Even,
+                _=>Parity.None
+            };
         }
 
         public static void Close()
