@@ -39,7 +39,7 @@ namespace BD0.CP
             }
         }
 
-        public static async Task<string> Write(string write, int delay = 200, bool extraDelayOn = false)
+        public static async Task<string> Write(string write, int delay = 50, bool extraDelayOn = false)
         {
             if (port == null) return null;
             const string endOfLine = "\r\n";

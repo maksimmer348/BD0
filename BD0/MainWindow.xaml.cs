@@ -21,6 +21,8 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using BD0.BD;
 using BD0.CP;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Sqlite;
 using Microsoft.VisualBasic;
 
 
@@ -31,10 +33,13 @@ namespace BD0
     /// </summary>
     ///
 
-   
+
     public partial class MainWindow : Window
     {
         private static DispatcherTimer MyTimer;
+
+        private ApplicationContext db;//перменная для ипсолзования баз данных
+
         public MainWindow()
         {
             InitializeComponent();
@@ -65,7 +70,7 @@ namespace BD0
         {
 
         }
-  
+
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -85,8 +90,8 @@ namespace BD0
         {
             //записывааем в компорт занчения из комобоксов и открываем его (компорт)
             //string num, int parity, int baud,  int stop, bool dtr
-           ComPortWorking.Open(NumCom.Text, Int32.Parse(ParityBit.Text),
-               Int32.Parse(BaudRate.Text), Int32.Parse(StopBits.Text), (bool)DTR.IsChecked);
+            ComPortWorking.Open(NumCom.Text, Int32.Parse(ParityBit.Text),
+                Int32.Parse(BaudRate.Text), Int32.Parse(StopBits.Text), (bool)DTR.IsChecked);
         }
         //считвываем значения индексов из комобоксов и отправляем их в класс конфига
         public ComConfig SettingsSendOrShange()
@@ -123,16 +128,15 @@ namespace BD0
 
         void SendToCom(Button btn)
         {
-            //очищаем табицу 
-            SetMyTimer(new TimeSpan(0,0,0,1));//утанвалвиваем таймер
+            SetMyTimer(new TimeSpan(0, 0, 0, 1));//утанвалвиваем таймер
         }
 
         void SetMyTimer(TimeSpan time)
         {
             MyTimer = new DispatcherTimer();
-            MyTimer.Tick += new EventHandler(timer_Tick);
             MyTimer.Interval = time;
             MyTimer.Start();
+            MyTimer.Tick += new EventHandler(timer_Tick);
         }
 
         private void timer_Tick(object? sender, EventArgs e)
@@ -142,13 +146,46 @@ namespace BD0
 
         async void Actions()
         {
-            var write = await ComPortWorking.Write(Commands.GetCommand("Return set voltage"));
-           Debug.WriteLine(write + $" {DateAndTime.Now}");
+            db.Add( new GetValues(await ComPortWorking.Write(Commands.GetCommand("Return set voltage")),
+                await ComPortWorking.Write(Commands.GetCommand("Return set current")), DateAndTime.Now));
         }
 
         private void GetValue_Click(object sender, RoutedEventArgs e)
         {
             SendToCom(GetValue);
         }
+    }
+
+    public class GetValues
+    {
+        public int Id { get; set; }
+        public string Voltage { get; set; }
+        public string Ampere { get; set; }
+        public DateTime DateTime { get; set; }
+
+        public GetValues( string voltage, string ampere, DateTime dateTime)
+        {
+          
+            Voltage = voltage;
+            Ampere = ampere;
+            DateTime = dateTime;
+        }
+
+        public GetValues()
+        {
+           
+        }
+    }
+
+    public class ApplicationContext : DbContext
+    {
+        //представляет набор сущностей, хранящихся в базе данных
+        public DbSet<GetValues> Users { get; set; }
+
+        //Переопределение у класса контекста данных метода
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+            => options.UseSqlite(@"DataBaseSupply.db");//В этот метод передается объект DbContextOptionsBuilder,
+        // который позволяет создать параметры подключения. Для их создания вызывается метод UseSqlServer, в который передается строка подключения.
+
     }
 }
