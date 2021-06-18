@@ -44,7 +44,8 @@ namespace BD0
         {
             InitializeComponent();
             SettingsSerializer.InitSettings();//создаем файл с настройками
-                                              //по умолчанию если такого файла еше нет
+            //по умолчанию если такого файла еше нет
+            db = new ApplicationContext();
 
         }
 
@@ -144,15 +145,21 @@ namespace BD0
             Actions();
         }
 
+        private GetValues GetVal;
+
         async void Actions()
         {
-            db.Add( new GetValues(await ComPortWorking.Write(Commands.GetCommand("Return set voltage")),
-                await ComPortWorking.Write(Commands.GetCommand("Return set current")), DateAndTime.Now));
+            GetVal = new GetValues(await ComPortWorking.Write(Commands.GetCommand("Return set voltage"),100),
+                await ComPortWorking.Write(Commands.GetCommand("Return set current"),100));
+
+            db.Add(GetVal);
+             db.SaveChanges();
         }
 
         private void GetValue_Click(object sender, RoutedEventArgs e)
         {
-            SendToCom(GetValue);
+            SendToCom(GetValue); 
+           
         }
     }
 
@@ -161,19 +168,19 @@ namespace BD0
         public int Id { get; set; }
         public string Voltage { get; set; }
         public string Ampere { get; set; }
-        public DateTime DateTime { get; set; }
+        public DateTime DateTime { get; set; } = DateTime.Now;
 
-        public GetValues( string voltage, string ampere, DateTime dateTime)
+        public GetValues(string voltage, string ampere) //,DateTime dateTime)
         {
-          
+
             Voltage = voltage;
             Ampere = ampere;
-            DateTime = dateTime;
+            //DateTime = dateTime;
         }
 
         public GetValues()
         {
-           
+
         }
     }
 
@@ -182,10 +189,14 @@ namespace BD0
         //представляет набор сущностей, хранящихся в базе данных
         public DbSet<GetValues> Users { get; set; }
 
+        public ApplicationContext()
+        {
+            Database.EnsureCreated();
+        }
         //Переопределение у класса контекста данных метода
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite(@"DataBaseSupply.db");//В этот метод передается объект DbContextOptionsBuilder,
+            => options.UseSqlite(@"Data Source = DataBaseSupply.db");//В этот метод передается объект DbContextOptionsBuilder,
         // который позволяет создать параметры подключения. Для их создания вызывается метод UseSqlServer, в который передается строка подключения.
-
+       
     }
 }
