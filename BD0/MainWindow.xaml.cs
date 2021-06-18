@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -20,6 +21,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using BD0.BD;
 using BD0.CP;
+using Microsoft.VisualBasic;
 
 
 namespace BD0
@@ -122,7 +124,7 @@ namespace BD0
         void SendToCom(Button btn)
         {
             //очищаем табицу 
-            SetMyTimer(new TimeSpan(0,0,0,10));//утанвалвиваем таймер
+            SetMyTimer(new TimeSpan(0,0,0,1));//утанвалвиваем таймер
         }
 
         void SetMyTimer(TimeSpan time)
@@ -141,6 +143,7 @@ namespace BD0
         async void Actions()
         {
             var write = await ComPortWorking.Write(Commands.GetCommand("Return set voltage"));
+           Debug.WriteLine(write + $" {DateAndTime.Now}");
         }
 
         private void GetValue_Click(object sender, RoutedEventArgs e)

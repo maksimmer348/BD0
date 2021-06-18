@@ -18,7 +18,7 @@ namespace BD0.CP
             if (port == null || port.IsOpen == false)
             {
 
-                port = new GodSerialPort(num, baud, parity, dataBits:8, stop)
+                port = new GodSerialPort("COM" + num, baud, parity, dataBits:8, stop)
                 {
                     DtrEnable = dtr,
                     TryReadNumber = 1,
