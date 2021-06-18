@@ -39,9 +39,11 @@
         <DataGrid x:Name="phonesGrid" AutoGenerateColumns="True" ItemsSource="{DynamicResource ResourceKey=phones}" Margin="250,29,325,87">
             <DataGrid.Resources>
                 <collections:ArrayList x:Key="phones">
-                   
+
                 </collections:ArrayList>
             </DataGrid.Resources>
         </DataGrid>
+        <Button Name="GetValue" Content="GetValue" HorizontalAlignment="Left" Margin="250,369,0,0" VerticalAlignment="Top" Click="GetValue_Click" />
+        <Button Content="Button" HorizontalAlignment="Left" Margin="435,369,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

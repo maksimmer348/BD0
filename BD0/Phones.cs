@@ -1,6 +1,6 @@
 ﻿namespace BD0
 {
-    public class Phone
+    public class 
     {
         public string Title { get; set; }
         public string Company { get; set; }

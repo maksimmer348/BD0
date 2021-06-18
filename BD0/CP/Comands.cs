@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 
 namespace BD0.BD
 {
     public static class Commands
     {
+       
         public static Dictionary<string, string> CommandsLib = new Dictionary<string, string>();
 
         static Commands()
@@ -18,7 +20,15 @@ namespace BD0.BD
 
             CommandsLib.Add("Output", ":outp:stat");
             CommandsLib.Add("Get Output", ":outp:stat?");
+
+
         }
 
+        public static string GetCommand(string key, string param = null)
+        {
+            return $"{CommandsLib[key]} {param}".Replace(",", ".");
+        }
+
+        
     }
 }
