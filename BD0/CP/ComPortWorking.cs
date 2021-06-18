@@ -13,33 +13,22 @@ namespace BD0.CP
     {
         private static GodSerialPort port;
         public static int CfgChannelNum;
-        public static void Open(string num, int baud, int parity, int stop, bool dtr)
+        public static void Open(string num, int parity,int baud, int stop , bool dtr)
         {
             if (port == null || port.IsOpen == false)
             {
-                port = new GodSerialPort(num, baud, ConvertParity(parity),);
-                    port.PortName = num;
-                    port.BaudRate = baud;
-                    port.Parity = ConvertParity(parity);
-                    port.StopBits = ConvertStopBits(stop);
-                    port.DtrEnable = dtr;
-                    port.TryReadNumber = 1;
-                    port.TryReadSpanTime = 0;
-                    port.Terminator = null;
-                    port.Open();
-                    CfgChannelNum = Int32.Parse(num);
-            }
-        }
 
-        private static Parity ConvertParity(int parity)
-        {
-            return parity switch
-            {
-                0 => Parity.None,
-                1 => Parity.Odd,
-                2 => Parity.Even,
-                _=>Parity.None
-            };
+                port = new GodSerialPort(num, baud, parity, dataBits:8, stop)
+                {
+                    DtrEnable = dtr,
+                    TryReadNumber = 1,
+                    TryReadSpanTime = 0,
+                    Terminator = null
+                };
+
+                port.Open();
+                CfgChannelNum = Int32.Parse(num);
+            }
         }
 
         public static void Close()
@@ -86,6 +75,16 @@ namespace BD0.CP
                 1 => StopBits.One,
                 2 => StopBits.Two,
                 _ => StopBits.One
+            };
+        }
+        private static Parity ConvertParity(int parity)
+        {
+            return parity switch
+            {
+                0 => Parity.None,
+                1 => Parity.Odd,
+                2 => Parity.Even,
+                _ => Parity.None
             };
         }
 

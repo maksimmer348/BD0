@@ -70,8 +70,8 @@ namespace BD0
 
             //при запуске берется из файла индексы конфигуратора и записываются в индексы комобоксов
             NumCom.SelectedIndex = SettingsSerializer.Deserialize().ChannelNum;
-            BaudRate.SelectedIndex = SettingsSerializer.Deserialize().BaudRate;
             ParityBit.SelectedIndex = SettingsSerializer.Deserialize().ParityBit;
+            BaudRate.SelectedIndex = SettingsSerializer.Deserialize().BaudRate;
             StopBits.SelectedIndex = SettingsSerializer.Deserialize().StopBits;
             DTR.IsChecked = SettingsSerializer.Deserialize().DTR;
             //запуск компортра с выписаными параметрами из комобоксов
@@ -82,15 +82,16 @@ namespace BD0
         void StartSettings()
         {
             //записывааем в компорт занчения из комобоксов и открываем его (компорт)
-           ComPortWorking.Open(NumCom.Text, Int32.Parse(BaudRate.Text),Int32.Parse(ParityBit.Text),
-               Int32.Parse(StopBits.Text),(bool)DTR.IsChecked );
+            //string num, int parity, int baud,  int stop, bool dtr
+           ComPortWorking.Open(NumCom.Text, Int32.Parse(ParityBit.Text),
+               Int32.Parse(BaudRate.Text), Int32.Parse(StopBits.Text), (bool)DTR.IsChecked);
         }
         //считвываем значения индексов из комобоксов и отправляем их в класс конфига
         public ComConfig SettingsSendOrShange()
         {
             var com = NumCom.SelectedIndex;
-            var baud = BaudRate.SelectedIndex;
             var parity = ParityBit.SelectedIndex;
+            var baud = BaudRate.SelectedIndex;
             var stops = StopBits.SelectedIndex;
             //TextBlock flow = (TextBlock)NumCom.SelectedValue;
             var dtr = (bool)DTR.IsChecked;
@@ -107,15 +108,15 @@ namespace BD0
 
         }
         //кнопка принять 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void OK_Click(object sender, RoutedEventArgs e)
         {
             //записываем новые значения в файл конфига
             SettingsSerializer.Serialize(SettingsSendOrShange());
             //если порт открыть закрывем его
             ComPortWorking.Close();
             //записываем значения из комобоксов в компорт и открываем его
-            ComPortWorking.Open(NumCom.Text, Int32.Parse(BaudRate.Text), Int32.Parse(ParityBit.Text),
-                Int32.Parse(StopBits.Text), (bool)DTR.IsChecked);
+            ComPortWorking.Open(NumCom.Text, Int32.Parse(ParityBit.Text),
+                Int32.Parse(BaudRate.Text), Int32.Parse(StopBits.Text), (bool)DTR.IsChecked);
         }
 
         void SendToCom(Button btn)

@@ -13,17 +13,17 @@
             <TextBlock>4</TextBlock>
             <!-- остальное содержимое списка-->
         </ComboBox>
-        <ComboBox Name ="BaudRate" HorizontalAlignment="Left" Margin="524,95,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="BaudRate_SelectionChanged">
+        <ComboBox Name ="BaudRate" HorizontalAlignment="Left" Margin="524,130,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="BaudRate_SelectionChanged">
             <TextBlock>2400</TextBlock>
             <TextBlock>9600</TextBlock>
         </ComboBox>
-        <ComboBox Name="ParityBit" HorizontalAlignment="Left" Margin="524,137,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="ParityBit_SelectionChanged">
+        <ComboBox Name="ParityBit" HorizontalAlignment="Left" Margin="524,91,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="ParityBit_SelectionChanged">
             <TextBlock>0</TextBlock>
             <TextBlock>1</TextBlock>
         </ComboBox>
         <ComboBox Name ="StopBits" HorizontalAlignment="Left" Margin="524,177,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="StopBits_SelectionChanged">
-            <TextBlock>0</TextBlock>
             <TextBlock>1</TextBlock>
+            <TextBlock>2</TextBlock>
         </ComboBox>
         <ComboBox Name ="FlowControl" HorizontalAlignment="Left" Margin="524,222,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="FlowControl_SelectionChanged">
             <TextBlock>on</TextBlock>
@@ -31,11 +31,11 @@
         </ComboBox>
         <CheckBox Name ="DTR" Content="DTR" HorizontalAlignment="Left" Margin="534,264,0,0" VerticalAlignment="Top"/>
         <Label Content="#Com" HorizontalAlignment="Left" Margin="658,52,0,0" VerticalAlignment="Top" Width="102" Height="37"/>
-        <Label Content="BaudRate" HorizontalAlignment="Left" Margin="658,95,0,0" VerticalAlignment="Top" Width="102" Height="37"/>
-        <Label Content="PArityBit" HorizontalAlignment="Left" Margin="658,135,0,0" VerticalAlignment="Top" Width="102" Height="37"/>
+        <Label Content="BaudRate" HorizontalAlignment="Left" Margin="658,130,0,0" VerticalAlignment="Top" Width="102" Height="37"/>
+        <Label Content="PArityBit" HorizontalAlignment="Left" Margin="658,89,0,0" VerticalAlignment="Top" Width="102" Height="37"/>
         <Label Content="StopBits" HorizontalAlignment="Left" Margin="658,172,0,0" VerticalAlignment="Top" Width="102" Height="37"/>
         <Label Content="FlowControl" HorizontalAlignment="Left" Margin="658,222,0,0" VerticalAlignment="Top" Width="102" Height="37"/>
-        <Button Content="Ok" HorizontalAlignment="Left" Margin="594,268,0,0" VerticalAlignment="Top" Click="Button_Click" Width="86" Height="40"/>
+        <Button Name="OK" Content="Ok" HorizontalAlignment="Left" Margin="594,268,0,0" VerticalAlignment="Top" Click="OK_Click" Width="86" Height="40"/>
         <DataGrid x:Name="phonesGrid" AutoGenerateColumns="True" ItemsSource="{DynamicResource ResourceKey=phones}" Margin="250,29,325,87">
             <DataGrid.Resources>
                 <collections:ArrayList x:Key="phones">
