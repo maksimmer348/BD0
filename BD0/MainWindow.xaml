@@ -36,14 +36,16 @@
         <Label Content="StopBits" HorizontalAlignment="Left" Margin="658,172,0,0" VerticalAlignment="Top" Width="102" Height="37"/>
         <Label Content="FlowControl" HorizontalAlignment="Left" Margin="658,222,0,0" VerticalAlignment="Top" Width="102" Height="37"/>
         <Button Name="OK" Content="Ok" HorizontalAlignment="Left" Margin="594,268,0,0" VerticalAlignment="Top" Click="OK_Click" Width="86" Height="40"/>
-        <DataGrid x:Name="phonesGrid" AutoGenerateColumns="True" ItemsSource="{DynamicResource ResourceKey=phones}" Margin="250,29,325,87">
-            <DataGrid.Resources>
-                <collections:ArrayList x:Key="phones">
-
-                </collections:ArrayList>
-            </DataGrid.Resources>
+        <DataGrid x:Name="DataSupply" AutoGenerateColumns="True" Margin="145,34,325,87">
+           <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="30"></DataGridTextColumn>
+                <DataGridTextColumn Header="Voltage" Binding="{Binding Voltage}" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Header="Ampere" Binding ="{Binding Ampere}" Width="*"></DataGridTextColumn>
+                <DataGridTextColumn Header="Date" Binding="{Binding DateTime}" Width="Auto"></DataGridTextColumn>
+            </DataGrid.Columns>
         </DataGrid>
         <Button Name="GetValue" Content="GetValue" HorizontalAlignment="Left" Margin="250,369,0,0" VerticalAlignment="Top" Click="GetValue_Click" />
-        <Button Content="Button" HorizontalAlignment="Left" Margin="435,369,0,0" VerticalAlignment="Top"/>
+        <Button Name="Out" Content="Output" HorizontalAlignment="Left" Margin="435,369,0,0" VerticalAlignment="Top" Click="Out_Click"/>
+        <Button Name="Ind" HorizontalAlignment="Left" Margin="490,369,0,0" VerticalAlignment="Top" Height="20" Width="25"/>
     </Grid>
 </Window>

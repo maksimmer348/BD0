@@ -20,8 +20,6 @@ namespace BD0.BD
 
             CommandsLib.Add("Output", ":outp:stat");
             CommandsLib.Add("Get Output", ":outp:stat?");
-
-
         }
 
         public static string GetCommand(string key, string param = null)

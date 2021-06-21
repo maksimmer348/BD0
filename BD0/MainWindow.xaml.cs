@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -19,11 +20,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using BD0.BD;
 using BD0.CP;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Sqlite;
 using Microsoft.VisualBasic;
+using static BD0.BD.Commands;
+using static BD0.CP.ComPortWorking;
 
 
 namespace BD0
@@ -46,6 +48,17 @@ namespace BD0
             SettingsSerializer.InitSettings();//создаем файл с настройками
             //по умолчанию если такого файла еше нет
             db = new ApplicationContext();
+
+            var users = db.Users.OrderBy(b => b.Id);//выберем первый элемент из списка базы данных
+            foreach (var user in users)
+            {
+                if (users.Last() != user)
+                {
+                    Debug.WriteLine($"{user.Id} {user.Voltage} {user.Ampere} {user.DateTime}");//выведем на коносль элемент из списка базы данных
+                    DataSupply.Items.Add(user);
+                }
+
+            }
 
         }
 
@@ -91,7 +104,7 @@ namespace BD0
         {
             //записывааем в компорт занчения из комобоксов и открываем его (компорт)
             //string num, int parity, int baud,  int stop, bool dtr
-            ComPortWorking.Open(NumCom.Text, Int32.Parse(ParityBit.Text),
+            Open(NumCom.Text, Int32.Parse(ParityBit.Text),
                 Int32.Parse(BaudRate.Text), Int32.Parse(StopBits.Text), (bool)DTR.IsChecked);
         }
         //считвываем значения индексов из комобоксов и отправляем их в класс конфига
@@ -123,12 +136,22 @@ namespace BD0
             //если порт открыть закрывем его
             ComPortWorking.Close();
             //записываем значения из комобоксов в компорт и открываем его
-            ComPortWorking.Open(NumCom.Text, Int32.Parse(ParityBit.Text),
+            Open(NumCom.Text, Int32.Parse(ParityBit.Text),
                 Int32.Parse(BaudRate.Text), Int32.Parse(StopBits.Text), (bool)DTR.IsChecked);
         }
 
         void SendToCom(Button btn)
         {
+            //var users = db.Users.OrderBy(b => b.Id);//выберем первый элемент из списка базы данных
+            //foreach (var user in users)
+            //{
+            //    if (users.Last() != user)
+            //    {
+            //        Debug.WriteLine($"{user.Id} {user.Voltage} {user.Ampere} {user.DateTime}");//выведем на коносль элемент из списка базы данных
+                   
+            //    }
+
+            //}
             SetMyTimer(new TimeSpan(0, 0, 0, 1));//утанвалвиваем таймер
         }
 
@@ -143,24 +166,78 @@ namespace BD0
         private void timer_Tick(object? sender, EventArgs e)
         {
             Actions();
+            SendToTable();
         }
 
         private GetValues GetVal;
 
         async void Actions()
         {
-            GetVal = new GetValues(await ComPortWorking.Write(Commands.GetCommand("Return set voltage"),100),
-                await ComPortWorking.Write(Commands.GetCommand("Return set current"),100));
+            GetVal = new GetValues(await Write(GetCommand("Return voltage"), 200),
+                await Write(GetCommand("Return current"), 200));
 
             db.Add(GetVal);
-             db.SaveChanges();
+            db.SaveChanges();
+
         }
 
         private void GetValue_Click(object sender, RoutedEventArgs e)
         {
-            SendToCom(GetValue); 
-           
+            SendToCom(GetValue);
+
         }
+
+        public async void Out_Click(object sender, RoutedEventArgs e)
+        {
+            var timerEnabl = true;
+            if (MyTimer != null && MyTimer.IsEnabled)
+            {
+                MyTimer.Stop();
+                timerEnabl = false;
+            }
+            var getAnswer = await Write(GetCommand("Get Output"), 200);
+            if (getAnswer == "0")
+            {
+
+                await Write(":outp:stat 1", 200);
+                StatusButtonOn(Ind, true);
+            }
+            else
+            {
+                await Write(":outp:stat 0", 200);
+                StatusButtonOn(Ind, false);
+            }
+
+            if (!timerEnabl)
+            {
+                MyTimer.Start();
+            }
+        }
+
+        void StatusButtonOn(Button name, bool activate)
+        {
+            if (activate)
+            {
+                name.Background = Brushes.Green;
+            }
+
+            if (!activate)
+            {
+                name.Background = Brushes.Red;
+            }
+
+        }
+
+        void SendToTable()
+        {
+            var users = db.Users.OrderBy(b => b.Id).Last();//выберем первый элемент из списка базы данных
+
+            Debug.WriteLine($"{users.Id} {users.Voltage} {users.Ampere} {users.DateTime}");//выведем на коносль элемент из списка базы данных
+            DataSupply.Items.Add(users);
+            DataSupply.ScrollIntoView(users);
+        }
+
+      
     }
 
     public class GetValues
@@ -188,15 +265,22 @@ namespace BD0
     {
         //представляет набор сущностей, хранящихся в базе данных
         public DbSet<GetValues> Users { get; set; }
+        private string DBPath = "DataBaseSupply.db";
 
         public ApplicationContext()
         {
-            Database.EnsureCreated();
+            if (!File.Exists(DBPath))
+            {
+                Database.EnsureCreated();
+            }
+
         }
+
         //Переопределение у класса контекста данных метода
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite(@"Data Source = DataBaseSupply.db");//В этот метод передается объект DbContextOptionsBuilder,
+            => options.UseSqlite($"Data Source = {DBPath}"); //В этот метод передается объект DbContextOptionsBuilder,
+
         // который позволяет создать параметры подключения. Для их создания вызывается метод UseSqlServer, в который передается строка подключения.
-       
     }
 }
+
