@@ -90,11 +90,12 @@ namespace BD0
         {
 
             //при запуске берется из файла индексы конфигуратора и записываются в индексы комобоксов
-            NumCom.SelectedIndex = SettingsSerializer.Deserialize().ChannelNum;
-            ParityBit.SelectedIndex = SettingsSerializer.Deserialize().ParityBit;
-            BaudRate.SelectedIndex = SettingsSerializer.Deserialize().BaudRate;
-            StopBits.SelectedIndex = SettingsSerializer.Deserialize().StopBits;
-            DTR.IsChecked = SettingsSerializer.Deserialize().DTR;
+            _comConfig = SettingsSerializer.Deserialize();
+            NumCom.SelectedIndex = _comConfig.ChannelNum;
+            ParityBit.SelectedIndex = _comConfig.ParityBit;
+            BaudRate.SelectedIndex = _comConfig.BaudRate;
+            StopBits.SelectedIndex = _comConfig.StopBits;
+            DTR.IsChecked = _comConfig.DTR;
             //запуск компортра с выписаными параметрами из комобоксов
             StartSettings();
         }
@@ -170,6 +171,7 @@ namespace BD0
         }
 
         private GetValues GetVal;
+        private ComConfig _comConfig;
 
         async void Actions()
         {
